@@ -1,11 +1,47 @@
-import type {TextToSpeechProps} from 'src/components/text-to-speech/types';
+import {createContext, useContext, useState} from 'react';
+
+import type {TextToSpeechProps, TextToSpeechContextType} from 'src/components/text-to-speech/types';
+
+const TextToSpeechContext = createContext<TextToSpeechContextType | null>(null);
+
+const useTextToSpeechContext = () => {
+    const context = useContext(TextToSpeechContext);
+    
+    if (!context) {
+        throw new Error('useTextToSpeechContext must be used within a TextToSpeech component');
+    }
+    return context;
+};
 
 const TextToSpeech = ({
-    lang = 'en-US',
-    rate = 1,
-    pitch = 1,
+    children,
+    lang: _lang = 'en-US',
+    rate: _rate = 1,
+    pitch: _pitch = 1,
     targetRef
 }: TextToSpeechProps) => {
+    const [lang, setLang] = useState<string>(_lang);
+    const [pitch, setPitch] = useState<number>(_pitch);
+    const [rate, setRate] = useState<number>(_rate);
+
+    return (
+        <TextToSpeechContext.Provider value={{
+            lang,
+            pitch,
+            rate,
+            setLang,
+            setPitch,
+            setRate,
+            targetRef
+        }}>
+            {children}
+        </TextToSpeechContext.Provider>
+    );
+};
+
+const SpeakButton = () => {
+    const {lang, rate, pitch, targetRef} = useTextToSpeechContext();
+    
     const handleSpeak = () => {
         const speechSynthesis = window.speechSynthesis;
 
@@ -41,5 +77,7 @@ const TextToSpeech = ({
         Speak
     </button>
 }
+
+TextToSpeech.Speak = SpeakButton;
 
 export default TextToSpeech;
