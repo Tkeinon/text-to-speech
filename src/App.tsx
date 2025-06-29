@@ -14,10 +14,14 @@ function App() {
             placeholder="Type something to read aloud"
         />
         <TextToSpeech targetRef={textRef}>
-            <TextToSpeech.RateController />
+        <TextToSpeech.RateController />
             <TextToSpeech.PitchController />
             <TextToSpeech.Speak />
+            <TextToSpeech.Controls />
+            <TextToSpeech.VoiceController />
+            <TextToSpeech.VolumeController />
         </TextToSpeech>
+        <br />
         <p ref={paragraphRef as React.RefObject<HTMLParagraphElement>}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer consequat, est sed cursus bibendum, lectus purus sodales tellus, 
         tempor mollis ligula arcu a dui. Praesent at ullamcorper augue, vitae elementum erat. Praesent pretium ex sed velit aliquam pellentesque. 
