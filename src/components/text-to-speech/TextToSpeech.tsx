@@ -10,6 +10,7 @@ const useTextToSpeechContext = () => {
     if (!context) {
         throw new Error('useTextToSpeechContext must be used within a TextToSpeech component');
     }
+
     return context;
 };
 
@@ -39,7 +40,13 @@ const TextToSpeech = ({
     );
 };
 
-const SpeakButton = () => {
+const SpeakButton = ({
+    className = '',
+    buttonText = 'Speak'
+}: {
+    className?: string,
+    buttonText?: string
+}) => {
     const {lang, rate, pitch, targetRef} = useTextToSpeechContext();
     
     const handleSpeak = () => {
@@ -69,15 +76,48 @@ const SpeakButton = () => {
         utterance.rate = rate;
         utterance.pitch = pitch;
 
-        speechSynthesis.cancel();
         speechSynthesis.speak(utterance);
+    };
+
+    return <button className={className} onClick={handleSpeak} type='button'>
+        {buttonText}
+    </button>;
+};
+
+const RateController = ({
+    className = '',
+    labelText = 'Rate',
+}: {
+    className: string,
+    labelText?: string
+}) => {
+    const {rate, setRate} = useTextToSpeechContext();
+
+    const onChange = (value: string) => {
+        const val = parseFloat(value);
+
+        if (!isNaN(val)) {
+            setRate(val);
+        }
     }
 
-    return <button onClick={handleSpeak}>
-        Speak
-    </button>
-}
+    return <div className={className}>
+        <label htmlFor='rate-controller'>
+            {labelText}: {rate.toFixed(1)}x
+            <input 
+                type='range'
+                min='0.5' 
+                max='2.0' 
+                step='0.1' 
+                value={rate} 
+                onChange={(event) => onChange(event.target.value)} 
+                id='rate-controller'
+            />
+        </label>
+    </div>;
+};
 
 TextToSpeech.Speak = SpeakButton;
+TextToSpeech.RateController = RateController;
 
 export default TextToSpeech;
