@@ -1,4 +1,4 @@
-import {createContext, useContext, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 
 import type {TextToSpeechProps, TextToSpeechContextType} from 'src/components/text-to-speech/types';
 
@@ -290,6 +290,26 @@ const PitchController = ({
     </div>;
 };
 
+const VoiceSelector = ({className = ''}: {className?: string}) => {
+    const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+    const {lang, setLang} = useTextToSpeechContext();
+
+    useEffect(() => {
+        const loadVoices = () => {
+            setVoices(speechSynthesis.getVoices());
+        };
+        
+        speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+    }, [setVoices]);
+
+    return <select className={className} onChange={(event) => setLang(event.target.value)} value={lang}>
+        {voices.map((voice) => <option key={voice.name} value={voice.lang}>
+            {voice.name} ({voice.lang})
+        </option>)}
+    </select>
+}
+
 TextToSpeech.Speak = SpeakButton;
 TextToSpeech.Stop = StopButton;
 TextToSpeech.Pause = PauseButton;
@@ -297,5 +317,6 @@ TextToSpeech.Resume = ResumeButton;
 TextToSpeech.Controls = SpeechControls;
 TextToSpeech.RateController = RateController;
 TextToSpeech.PitchController = PitchController;
+TextToSpeech.VoiceSelector = VoiceSelector;
 
 export default TextToSpeech;
