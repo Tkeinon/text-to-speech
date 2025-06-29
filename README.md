@@ -1,40 +1,20 @@
-# React TypeScript Project
+# Text-to-Speech React Component
 
-A clean React TypeScript project with ESLint configuration.
+A lightweight, customizable React component for browser-based text-to-speech functionality.
+Can be used to read text through refs from inputs and paragraphs/headers.
+
 
 ## Features
 
-- React 18 with TypeScript
-- Vite for fast development and building
-- ESLint with TypeScript and React rules
-- Clean, minimal boilerplate
+-  **Speech Synthesis** - Browser-native text-to-speech
+-  **Rate Control** - Adjustable speech speed (0.5x - 2.0x)
+-  **Pitch Control** - Modify voice pitch (0.5 - 2.0)
+-  **Volume Control** - Audio level adjustment
+-  **Voice Selection** - Choose from available system voices
+- **Speech Controls** - Play, pause, resume, stop
 
-## Getting Started
+## Live demo
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+Press here to test out [demo](https://tkeinon.github.io/text-to-speech/)
 
-2. Start the development server:
-   ```bash
-   npm run dev
-   ```
 
-3. Build for production:
-   ```bash
-   npm run build
-   ```
-
-4. Preview production build:
-   ```bash
-   npm run preview
-   ```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Run ESLint with auto-fix
