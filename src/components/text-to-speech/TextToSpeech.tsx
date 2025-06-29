@@ -57,6 +57,7 @@ const SpeakButton = ({
             return;
         }
 
+        speechSynthesis.cancel();
         const element = targetRef.current;
 
         if (!element) {
@@ -88,7 +89,7 @@ const RateController = ({
     className = '',
     labelText = 'Rate',
 }: {
-    className: string,
+    className?: string,
     labelText?: string
 }) => {
     const {rate, setRate} = useTextToSpeechContext();
@@ -117,7 +118,41 @@ const RateController = ({
     </div>;
 };
 
+const PitchController = ({
+    className = '',
+    labelText = 'Pitch',
+}: {
+    className?: string,
+    labelText?: string,
+}) => {
+    const {pitch, setPitch} = useTextToSpeechContext();
+
+    const onChange = (value: string) => {
+        const val = parseFloat(value);
+
+        if (!isNaN(val)) {
+            setPitch(val);
+        }
+    }
+
+    return <div className={className}>
+        <label htmlFor='pitch-controller'>
+            {labelText}: {pitch}x
+            <input 
+                type='range'
+                min='0.5' 
+                max='2.0' 
+                step='0.1' 
+                value={pitch} 
+                onChange={(event) => onChange(event.target.value)} 
+                id='pitch-controller'
+            />
+    </label>
+    </div>;
+};
+
 TextToSpeech.Speak = SpeakButton;
 TextToSpeech.RateController = RateController;
+TextToSpeech.PitchController = PitchController;
 
 export default TextToSpeech;
