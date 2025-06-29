@@ -21,11 +21,13 @@ const TextToSpeech = ({
     pitch: _pitch = 1,
     targetRef
 }: TextToSpeechProps) => {
+    const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+    const [isPaused, setIsPaused] = useState<boolean>(false);
     const [lang, setLang] = useState<string>(_lang);
     const [pitch, setPitch] = useState<number>(_pitch);
     const [rate, setRate] = useState<number>(_rate);
-    const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-    const [isPaused, setIsPaused] = useState<boolean>(false);
+    const [volume, setVolume] = useState<number>(0.5);
+
 
     const speechSynthesis = window.speechSynthesis;
 
@@ -58,19 +60,21 @@ const TextToSpeech = ({
 
     return (
         <TextToSpeechContext.Provider value={{
+            isPaused,
+            isSpeaking,
             lang,
+            pauseSpeaking,
             pitch,
             rate,
+            resumeSpeaking,
             setLang,
             setPitch,
             setRate,
-            targetRef,
+            setSpeakingState,
+            setVolume,
             stopSpeaking,
-            pauseSpeaking,
-            resumeSpeaking,
-            isSpeaking,
-            isPaused,
-            setSpeakingState
+            targetRef,
+            volume
         }}>
             {children}
         </TextToSpeechContext.Provider>
@@ -84,7 +88,7 @@ const SpeakButton = ({
     className?: string,
     buttonText?: string
 }) => {
-    const {lang, rate, pitch, targetRef, setSpeakingState} = useTextToSpeechContext();
+    const {lang, rate, pitch, targetRef, setSpeakingState, volume} = useTextToSpeechContext();
     
     const handleSpeak = () => {
         const speechSynthesis = window.speechSynthesis;
@@ -115,6 +119,7 @@ const SpeakButton = ({
         utterance.lang = lang;
         utterance.rate = rate;
         utterance.pitch = pitch;
+        utterance.volume = volume;
 
         // Setup event listener for controller buttons to work
         utterance.onstart = () => setSpeakingState(true, false);
@@ -123,12 +128,10 @@ const SpeakButton = ({
         utterance.onresume = () => setSpeakingState(true, false);
         utterance.onerror = () => setSpeakingState(false, false);
        
-        // Manually set speaking state immediately when we start
         setSpeakingState(true, false);
         
         try {
             speechSynthesis.speak(utterance);
-            console.log('Speech synthesis speak() called');
         } catch (error) {
             console.error('Failed to start speech synthesis:', error);
             setSpeakingState(false, false);
@@ -310,6 +313,30 @@ const VoiceSelector = ({className = ''}: {className?: string}) => {
     </select>
 }
 
+const VolumeController = ({
+    className = '',
+    labelText = 'Volume'
+}: {
+    className?: string,
+    labelText?: string
+}) => {
+    const {volume, setVolume} = useTextToSpeechContext();
+
+    return <div className={className}>
+        <label htmlFor='volume-controller'>
+            {labelText}: {Math.round(volume * 100)}%
+            <input 
+                max='1'
+                min='0'
+                onChange={(event) => setVolume(parseFloat(event.target.value))}
+                step='0.1'
+                type='range'
+                value={volume}
+            />
+        </label>
+    </div>
+}
+
 TextToSpeech.Speak = SpeakButton;
 TextToSpeech.Stop = StopButton;
 TextToSpeech.Pause = PauseButton;
@@ -318,5 +345,6 @@ TextToSpeech.Controls = SpeechControls;
 TextToSpeech.RateController = RateController;
 TextToSpeech.PitchController = PitchController;
 TextToSpeech.VoiceSelector = VoiceSelector;
+TextToSpeech.VolumeController = VolumeController;
 
 export default TextToSpeech;

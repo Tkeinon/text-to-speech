@@ -12,9 +12,11 @@ type TextToSpeechContextType = {
     lang: string;
     pitch: number;
     rate: number;
+    volume: number;
     setLang: (lang: string) => void;
     setPitch: (pitch: number) => void;
     setRate: (rate: number) => void;
+    setVolume: (volume: number) => void;
     targetRef: React.RefObject<HTMLElement | null>;
     stopSpeaking: () => void;
     pauseSpeaking: () => void;
